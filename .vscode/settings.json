@@ -1,13 +1,3 @@
 {
-  "factorio.versions": [
-    {
-      "name": "Steam",
-      "factorioPath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Factorio\\bin\\x64\\factorio.exe",
-      "active": true
-    }
-  ],
-  "Lua.workspace.userThirdParty": [
-    "c:\\Users\\carde\\AppData\\Roaming\\Code\\User\\workspaceStorage\\b25a3eceb4a960dd8000c7b383ee253f\\justarandomgeek.factoriomod-debug\\sumneko-3rd"
-  ],
-  "Lua.workspace.checkThirdParty": "ApplyInMemory"
+  "editor.tabSize": 4
 }
