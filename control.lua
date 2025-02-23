@@ -1,5 +1,11 @@
+require('types.cloud_storage')
+
 require('constants.general')
 require('constants.items')
+
+require('scripts.initialize')
+
+require('scripts.events.player_joined')
 
 frame = nil
 
@@ -7,6 +13,7 @@ function on_built_entity(event)
     print(event.entity.name)
 end
 
+---@param event EventData.on_gui_opened
 function on_gui_opened(event)
     local player = game.players[event.player_index]
 

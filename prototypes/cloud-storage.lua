@@ -2,8 +2,8 @@ graphics_location = general_constants.graphics_location_prefix
 
 cloud_storage = table.deepcopy(data.raw["container"]["steel-chest"])
 cloud_storage.name = item_constants.cloud_storage.name
-cloud_storage.inventory_size = 1000
 cloud_storage.max_health = 50000
+cloud_storage.inventory_size = 100
 cloud_storage.icon = graphics_location .. "/cloud-storage/icon.png"
 cloud_storage.resistances = {{
     type = "fire",
@@ -11,6 +11,15 @@ cloud_storage.resistances = {{
 }}
 cloud_storage.minable.result = item_constants.cloud_storage.name
 cloud_storage.inventory_type = "with_filters_and_bar"
+cloud_storage.collision_box = {{-2, -2}, {2, 2}}
+cloud_storage.selection_box = {{-2, -2}, {2, 2}}
+cloud_storage.picture = {
+    filename = graphics_location .. "/cloud-storage/uploader.png",
+    priority = "extra-high",
+    width = 200,
+    height = 200,
+    scale = 4 / (200 / 32)
+}
 
 data:extend({cloud_storage, {
     type = 'item',
