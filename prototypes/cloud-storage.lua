@@ -19,7 +19,7 @@ data:extend({cloud_storage, {
     icon_size = 200,
     subgroup = 'storage',
     order = 'a[items]-b[steel-chest]',
-    place_result = name,
+    place_result = item_constants.cloud_storage.name,
     stack_size = 50
 }, {
     type = 'recipe',
