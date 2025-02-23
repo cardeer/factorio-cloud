@@ -1,23 +1,20 @@
-local constants = require("constants")
-local path = constants.icon_location_prefix
+graphics_location = general_constants.graphics_location_prefix
 
-local name = 'cloud-storage'
-
-local cloud_storage = table.deepcopy(data.raw["container"]["steel-chest"])
-cloud_storage.name = name
+cloud_storage = table.deepcopy(data.raw["container"]["steel-chest"])
+cloud_storage.name = item_constants.cloud_storage.name
 cloud_storage.inventory_size = 1000
 cloud_storage.max_health = 50000
-cloud_storage.icon = path.."/cloud-storage/icon.png"
+cloud_storage.icon = graphics_location.."/cloud-storage/icon.png"
 cloud_storage.resistances = { { type = "fire", percent = 90 } }
-cloud_storage.minable.result = name
+cloud_storage.minable.result = item_constants.cloud_storage.name
 cloud_storage.inventory_type = "with_filters_and_bar"
 
 data:extend({
     cloud_storage,
     {
         type = 'item',
-        name = name,
-        icon = path.."/cloud-storage/icon.png",
+        name = item_constants.cloud_storage.name,
+        icon = graphics_location.."/cloud-storage/icon.png",
         icon_size = 200,
         subgroup = 'storage',
         order = 'a[items]-b[steel-chest]',
@@ -26,18 +23,18 @@ data:extend({
     },
     {
         type = 'recipe',
-        name = name,
+        name = item_constants.cloud_storage.name,
         ingredients = {
             { type = 'item', name = 'steel-plate', amount = 100 }
         },
         results = {
-            { type = 'item', name = name, amount = 1 }
+            { type = 'item', name = item_constants.cloud_storage.name, amount = 1 }
         }
     },
     {
         type = "technology",
-        name = name,
-        icon = path .. "/cloud-storage/icon.png",
+        name = item_constants.cloud_storage.name,
+        icon = graphics_location .. "/cloud-storage/icon.png",
         icon_size = 200,
         effects = {},
         unit = {
