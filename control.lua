@@ -1,7 +1,10 @@
-require('types.cloud_storage')
+require('types')
 
 require('constants.general')
 require('constants.items')
+
+require('utils.cloud')
+require('utils.player')
 
 require('scripts.initialize')
 

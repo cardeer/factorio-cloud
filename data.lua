@@ -1,5 +1,5 @@
 require('constants.general')
 require('constants.items')
 
-require('prototypes.super-power-generator')
-require('prototypes.cloud-storage')
+require('prototypes.super_power_generator')
+require('prototypes.cloud_storage')

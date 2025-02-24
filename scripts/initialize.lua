@@ -1,4 +1,5 @@
 function on_init()
+    ---@type { [number]: Cloud.Player }
     storage.players = {}
 
     ---@type Cloud.Storage
