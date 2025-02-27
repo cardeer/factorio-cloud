@@ -10,7 +10,6 @@ require('scripts.initialize')
 
 require('scripts.events.player_joined')
 
-
 ---@type LuaGuiElement
 frame = nil
 
@@ -28,68 +27,60 @@ function destroy_storage_cloud_ui(player)
     end
 end
 
+---@param player LuaPlayer
 function open_storage_cloud_ui(player)
-    if player.gui.screen.cloud_storage_gui ~= nil then
-        player.gui.screen.cloud_storage_gui.destroy()
+    if player.gui.relative['cloud-storage-gui'] ~= nil then
+        player.gui.relative['cloud-storage-gui'].destroy()
     end
 
+    local items_per_row = 10
+
     ---@type LuaGuiElement
-    frame = player.gui.screen.add({
+    local frame = player.gui.relative.add({
         type = 'frame',
-        name = 'cloud_storage_gui',
+        name = 'cloud-storage-gui',
         direction = 'vertical',
         caption = 'Cloud Storage',
+        anchor = {
+            gui = defines.relative_gui_type.controller_gui,
+            position = defines.relative_gui_position.left
+        }
+
     })
-    frame.location = { 50, 90 }
-    frame.style.width = 500
-    frame.style.height = 1000
-    frame.style.maximal_height = 1000
+
+    frame.location = {50, 90}
     frame.style.maximal_width = 500
-    frame.style.padding = 10
+    -- frame.style.padding = 10
 
-    frame_header = frame.add({
-        type = "flow",
-        name = "cloud_storage_gui_header",
-        direction = "horizontal",
+    local frame_scroll = frame.add({
+        type = 'scroll-pane',
+        name = 'frame-scroll',
+        vertical_scroll_policy = 'auto-and-reserve-space',
+        horizontal_scroll_policy = 'auto-and-reserve-space'
     })
 
-    frame_body = frame.add({
-        type = "flow",
-        name = "cloud_storage_gui_body",
-    })
+    frame_scroll.style.width = items_per_row * (40 * player.display_scale) + (1 * (items_per_row - 1))
 
-    tab_public = frame_header.add({
-        type = "tab",
-        name = "cloud_public_storage_tab",
-        caption = "Public Storage",
-    })
-
-    tab_private = frame_header.add({
-        type = "tab",
-        name = "cloud_private_storage_tab",
-        caption = "Private Storage",
-    })
-
-    frame_body.style.padding = 10
-    frame_body.style.maximal_height = 1000
-    frame_body.style.maximal_width = 500
-
-    tab_content = frame_body.add({
+    local tab_content = frame_scroll.add({
         type = "table",
-        name = "cloud_storage_content",
+        name = "cloud-storage-content",
         column_count = 10,
-        draw_horizontal_lines = true,
+        draw_horizontal_lines = true
     })
     tab_content.style.vertically_stretchable = true
     tab_content.style.horizontally_stretchable = true
+    tab_content.style.horizontal_spacing = 1
+    tab_content.style.vertical_spacing = 1
 
-    for i = 1, 100 do
-        tab_content.add({
+    for i = 1, 500 do
+        local button = tab_content.add({
             type = "sprite-button",
-            -- name = "cloud_storage_content_" .. i,
-            sprite = "item/iron-plate",
-            number = 100,
+            name = "cloud-storage-item" .. i,
+            sprite = "item/cloud-storage",
+            number = 100
         })
+
+        button.style = 'inventory_slot'
     end
 end
 
@@ -97,24 +88,14 @@ end
 function on_gui_opened(event)
     local player = game.players[event.player_index]
 
-    open_storage_cloud_ui(player)
+    if (player.opened_self == true and event.gui_type == defines.gui_type.controller) then
+        open_storage_cloud_ui(player)
+    end
 
-    -- if player.character then
-    -- print()
-    -- end
-    -- for item, value in pairs(player.get_main_inventory().get_contents()) do
-    --     if value["name"] then
-    --         print("item: " .. value["name"])
-    --     end
-    --     -- print("item idx : " .. value[0])
-    --     -- for key, val in pairs(value) do
-    --     --     print("item: " .. key .. " detail: " .. val)
-    --     -- end
-    -- end
-    item = player.get_main_inventory().remove({ name = "iron-plate", count = 1 })
-    -- if item then
-    --     print("item: " .. item.name)
-    -- end
+    item = player.get_main_inventory().remove({
+        name = "iron-plate",
+        count = 1
+    })
 end
 
 function on_gui_closed(event)
@@ -130,7 +111,7 @@ function on_gui_click(event)
     -- elseif element.name == "cloud_private_storage_tab" then
     --     print("cloud_private_storage_tab")
     -- end
-    print(element.name)
+    print('click ' .. element.name)
 end
 
 script.on_event(defines.events.on_built_entity, on_built_entity)
