@@ -5,4 +5,4 @@ function on_player_joined(event)
     end
 end
 
-script.on_event(defines.events.on_player_created)
+script.on_event(defines.events.on_player_created, on_player_joined)
