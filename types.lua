@@ -1,13 +1,10 @@
 ---@class Cloud.StorageDetail
 ---@field name string
 ---@field count number
----@field quality string
-local CloudStorageDetail = {}
+---@field quality 'normal' | 'rare' | 'epic' | 'legendary'
 
----@alias Cloud.Storage
----| { [string]: Cloud.StorageDetail }
-local CloudStorage = {}
+---@class Cloud.Storage
+---|  { [string] : Cloud.StorageDetail[]}
 
 ---@class Cloud.Player
 ---@field gui any
-local CloudPlayer = {}
