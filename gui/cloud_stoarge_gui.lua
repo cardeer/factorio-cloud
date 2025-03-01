@@ -70,7 +70,7 @@ function gui.cloud_storage.create(player)
             sprite = 'quality/' .. key
         })
 
-        sprite.style.size = {15, 15}
+        sprite.style.size = { 16, 16 }
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
             players:get(player.index).quality_filtered = key
@@ -89,17 +89,15 @@ function gui.cloud_storage.create(player)
         column_count = 10,
         draw_horizontal_lines = true
     })
-
-    local cloud_items = cloud:get_items()
-
-    for _, item in pairs(cloud_items) do
+    local quality = players:get(player.index).quality_filtered
+    for _, item in pairs(cloud:get_items(quality)) do
         content.add({
             type = "sprite-button",
-            sprite = "item/" .. key,
-            number = cloud_items[key] and cloud_items[key].count or 0,
-            -- tags = {
-            --     item = item
-            -- },
+            sprite = "item/" .. item.name,
+            number = item.count and item.count or 0,
+            tags = {
+                item = item
+            },
             style = 'inventory_slot'
         })
     end

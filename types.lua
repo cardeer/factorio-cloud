@@ -1,7 +1,7 @@
 ---@class Cloud.StorageDetail
 ---@field name string
----@field count number
----@field quality string
+---@field count? number
+---@field quality? string
 local CloudStorageDetail = {}
 
 ---@class Cloud.Storage

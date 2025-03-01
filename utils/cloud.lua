@@ -2,7 +2,7 @@ local cloud_storage = {}
 cloud = {}
 
 local function get_key(item)
-    return item.name .. "-" .. item.quality
+    return item.name .. "-" .. (item.quality or "normal")
 end
 
 local function get_prototype_stack(item_name)
