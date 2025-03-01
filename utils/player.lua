@@ -1,12 +1,19 @@
-player_util = {}
+players = {}
 
----@param player_index number
-function player_util.getGui(player_index)
-    if storage.players[player_index] == nil then
-        return nil
+---@type Cloud.Player
+local default_player_properties = {
+    quality_filtered = 'normal'
+
+}
+
+---@param index number
+---@return Cloud.Player
+function players:get(index)
+    if not self[index] then
+        self[index] = flib_table.deep_copy(default_player_properties)
     end
 
-    return storage.players[player_index].gui
+    return self[index]
 end
 
-return player_util
+return players

@@ -70,4 +70,14 @@ function cloud:item_names()
     return item_names
 end
 
+---@return Cloud.StorageDetail[]
+function cloud:get_items()
+    ---@type Cloud.StorageDetail[]
+    local items = {}
+    for _, item in pairs(storage.cloud_items) do
+        table.insert(items, item)
+    end
+    return items
+end
+
 return cloud
