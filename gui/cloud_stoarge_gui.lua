@@ -10,6 +10,7 @@ function gui.cloud_storage.create(player)
         name = constants.gui.cloud_storage.name .. "-" .. player.index,
         direction = 'vertical',
         caption = 'Cloud Storage',
+        style = "character_gui_left_side",
         anchor = {
             gui = defines.relative_gui_type.controller_gui,
             position = defines.relative_gui_position.left
@@ -17,26 +18,25 @@ function gui.cloud_storage.create(player)
     })
     relative[player.index] = frame
 
+
     frame.style.vertically_stretchable = true
     frame.style.horizontally_stretchable = true
 
-    local frame_scroll = frame.add({
-        type = 'scroll-pane',
-        name = 'frame-scroll' .. "-" .. player.index,
-        vertical_scroll_policy = 'auto',
-        horizontal_scroll_policy = 'auto'
+    frame_content = frame.add({
+        type = "frame",
+        style = "entity_frame",
     })
 
-    frame_scroll.style.horizontally_stretchable = true
+    frame_scroll_content = frame_content.add({
+        type = "scroll-pane"
+    })
 
     local frame_footer = frame.add({
         type = 'frame',
-        direction = 'horizontal',
-        style = 'subfooter_frame'
+        style = 'subfooter_frame',
     })
 
-    frame_footer.style.horizontally_stretchable = true
-    frame_footer.style.vertical_align = "bottom"
+    -- frame_footer.style.horizontally_stretchable = true
 
     local footer_flow = frame_footer.add({
         type = 'flow',
@@ -83,14 +83,23 @@ function gui.cloud_storage.create(player)
         ::continue::
     end
 
-    content = frame_scroll.add({
+    local column_length = 10
+
+    content = frame_scroll_content.add({
         type = "table",
         name = "cloud-storage-content" .. "-" .. player.index,
-        column_count = 10,
-        draw_horizontal_lines = true
+        column_count = column_length,
+
     })
+    content.style.vertically_stretchable = true
+    content.style.vertical_spacing = 0
+    content.style.horizontal_spacing = 0
+
     local quality = players:get(player.index).quality_filtered
+
+    local item_count = 0
     for _, item in pairs(cloud:get_items(quality)) do
+        item_count = item_count + 1
         local item_button = content.add({
             type = "sprite-button",
             name = 'cloud-storage-item-button-' .. item.name .. "-" .. player.index,
@@ -101,12 +110,30 @@ function gui.cloud_storage.create(player)
             },
             style = 'inventory_slot'
         })
+        if players:get(player.index).quality_filtered ~= "normal" then
+            sprite = item_button.add({
+                type = 'sprite',
+                resize_to_sprite = false,
+                sprite = 'quality/' .. item.quality
+            })
+            sprite.style.size = { 13, 13 }
+        end
         gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
             local inventory = player.get_main_inventory()
             if inventory ~= nil then
                 cloud:move_to_inventory(inventory, item)
             end
         end)
+    end
+
+    if item_count < column_length then
+        local count = column_length - item_count
+        for i = 1, count do
+            content.add({
+                type = "sprite-button",
+                style = 'inventory_slot'
+            })
+        end
     end
 end
 
