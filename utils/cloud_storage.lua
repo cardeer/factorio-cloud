@@ -1,31 +1,42 @@
 cloud_storage = {}
+
 cloud = {}
+
+function get_key(item)
+    return item.name .. "-" .. item.quality
+end
+
 ---@param item Cloud.StorageDetail
-function cloud_storage:create_item(item)
-    storage.cloud_items[item.name] = {
-        name = item.name,
-        count = item.count,
-        quality = item.quality and item.quality or "normal"
-    }
+---@return boolean
+function cloud_storage:is_full(item)
+    local limit = (prototypes.item[item.name] or 1) * storage.stacks_multiplier
+    if storage.cloud_items[get_key(item)].count < limit then
+        return false
+    else
+        return true
+    end
 end
 
 ---@param item Cloud.StorageDetail
 function cloud_storage:add(item)
-    if storage.cloud_items[item.name] == nil or storage.cloud_items[item.name].quality ~= item.quality then
-        self:create_item(item)
+    if self:is_full(item) then
+        return
+    end
+    if storage.cloud_items[get_key(item)] == nil or storage.cloud_items[get_key(item)].quality ~= item.quality then
+        storage.cloud_items[get_key(item)] = item
     else
-        storage.cloud_items[item.name].count = storage.cloud_items[item.name].count + item.count
+        storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
     end
 end
 
 ---@param item Cloud.StorageDetail
 function cloud_storage:remove(item)
-    if storage.cloud_items[item.name] ~= nil and storage.cloud_items[item.name].quality == item.quality then
-        local total = storage.cloud_items[item.name].count - item.count
+    if storage.cloud_items[get_key(item)] ~= nil and storage.cloud_items[get_key(item)].quality == item.quality then
+        local total = storage.cloud_items[get_key(item)].count - item.count
         if total > 0 then
-            storage.cloud_items[item.name].count = total
+            storage.cloud_items[get_key(item)].count = total
         else
-            storage.cloud_items[item.name] = nil
+            storage.cloud_items[get_key(item)] = nil
         end
     end
 end
@@ -40,6 +51,12 @@ end
 ---@return boolean
 function cloud:download(item)
     return false
+end
+
+---param item Cloud.StorageDetail
+---@return boolean
+function is_full(item)
+    return cloud_storage:is_full(item)
 end
 
 function cloud:item_names()

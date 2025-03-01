@@ -8,6 +8,8 @@ function on_init()
     storage.cloud_items = {}
 
     storage.stacks_multiplier = 1
+    storage.upload_tick = 5
+    storage.download_tick = 5
 end
 
 function on_load()

@@ -4,7 +4,7 @@ constants.items = {
     },
     cloud_storage = {
         name = 'cloud-storage',
-        icon = constants.general.graphics_location .. '/cloud-storage/icon.png'
+        icon = constants.general.graphics_location .. '/cloud-storage/icon.png',
     },
     cloud_storage_uploader = {
         name = 'cloud-storage-uploader'
@@ -13,4 +13,3 @@ constants.items = {
         name = 'cloud-storage-downloader'
     }
 }
-
