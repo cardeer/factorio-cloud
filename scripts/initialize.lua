@@ -1,4 +1,4 @@
-cloud_storage = require("utils/cloud_storage")
+cloud = require("utils.cloud")
 
 function on_init()
     ---@type Cloud.Storage

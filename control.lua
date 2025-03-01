@@ -3,7 +3,7 @@ require('types')
 
 require('constants.main')
 
-require('utils.cloud_storage')
+require('utils.cloud')
 require('utils.player')
 require("utils.utils")
 
@@ -20,30 +20,6 @@ frame = nil
 
 function on_built_entity(event)
     print(event.entity.name)
-end
-
----@param event EventData.on_gui_click
-function on_gui_click(event)
-    local player = game.players[event.player_index]
-    local element = event.element
-
-    if (element.parent.name == "cloud-storage-content") then
-        ---@type Cloud.StorageDetail
-        local el = element.tags["item"]
-        local stack = 1
-        if game.item_prototypes[el.name] and game.item_prototypes[el.name].stack_size < el.count then
-            stack = game.item_prototypes[el.name].stack_size
-        end
-        if game.item_prototypes[el.name] and game.item_prototypes[el.name].stack_size > el.count then
-            stack = el.count
-        end
-
-        player.get_main_inventory().insert({
-            name = el.name,
-            count = stack
-        })
-        cloud_storage:remove(el)
-    end
 end
 
 script.on_event(defines.events.on_built_entity, on_built_entity)

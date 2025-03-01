@@ -47,6 +47,8 @@ function gui.cloud_storage.create(player)
 
     qualities = prototypes.quality
 
+    local buttons = {}
+
     for key, quality in pairs(qualities) do
         if key == 'quality-unknown' then
             goto continue
@@ -54,11 +56,13 @@ function gui.cloud_storage.create(player)
 
         local button = footer_flow.add({
             type = 'button',
-            name = 'cloud-storage-quality-button' .. key,
+            name = 'cloud-storage-quality-button-' .. key,
             toggled = players:get(player.index).quality_filtered == key
         })
 
         button.style = 'tool_button'
+
+        buttons[key] = button
 
         sprite = button.add({
             type = 'sprite',
@@ -70,8 +74,10 @@ function gui.cloud_storage.create(player)
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
             players:get(player.index).quality_filtered = key
-            frame.destroy()
-            gui.cloud_storage.create(player)
+
+            for k, v in pairs(buttons) do
+                v.toggled = k == players:get(player.index).quality_filtered
+            end
         end)
 
         ::continue::
