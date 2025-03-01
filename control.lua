@@ -1,13 +1,11 @@
-require('utils.player')
+require('constants.main')
 require('types')
 
-require('constants.main')
-
-require('utils.cloud')
 require('utils.player')
-require("utils.utils")
+require('utils.cloud')
 
-require('scripts.initialize')
+require('scripts.scripts')
+
 require('scripts.events')
 
 require('gui.main')

@@ -1,14 +1,13 @@
+---@type { [integer]: LuaGuiElement}
+local relative = {}
+
 ---@param player LuaPlayer
 function gui.cloud_storage.create(player)
-    local relative = player.gui.relative
-
-    if relative[constants.gui.cloud_storage.name] then
-        relative[constants.gui.cloud_storage.name].destroy()
-    end
+    gui.cloud_storage.destroy(player)
 
     local frame = player.gui.relative.add({
         type = 'frame',
-        name = constants.gui.cloud_storage.name,
+        name = constants.gui.cloud_storage.name .. "-" .. player.index,
         direction = 'vertical',
         caption = 'Cloud Storage',
         anchor = {
@@ -16,13 +15,14 @@ function gui.cloud_storage.create(player)
             position = defines.relative_gui_position.left
         }
     })
+    relative[player.index] = frame
 
     frame.style.vertically_stretchable = true
     frame.style.horizontally_stretchable = true
 
     local frame_scroll = frame.add({
         type = 'scroll-pane',
-        name = 'frame-scroll',
+        name = 'frame-scroll' .. "-" .. player.index,
         vertical_scroll_policy = 'auto',
         horizontal_scroll_policy = 'auto'
     })
@@ -56,7 +56,7 @@ function gui.cloud_storage.create(player)
 
         local button = footer_flow.add({
             type = 'button',
-            name = 'cloud-storage-quality-button-' .. key,
+            name = 'cloud-storage-quality-button-' .. key .. "-" .. player.index,
             toggled = players:get(player.index).quality_filtered == key
         })
 
@@ -85,14 +85,15 @@ function gui.cloud_storage.create(player)
 
     content = frame_scroll.add({
         type = "table",
-        name = "cloud-storage-content",
+        name = "cloud-storage-content" .. "-" .. player.index,
         column_count = 10,
         draw_horizontal_lines = true
     })
     local quality = players:get(player.index).quality_filtered
     for _, item in pairs(cloud:get_items(quality)) do
-        content.add({
+        local item_button = content.add({
             type = "sprite-button",
+            name = 'cloud-storage-item-button-' .. item.name .. "-" .. player.index,
             sprite = "item/" .. item.name,
             number = item.count and item.count or 0,
             tags = {
@@ -100,10 +101,29 @@ function gui.cloud_storage.create(player)
             },
             style = 'inventory_slot'
         })
+        gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
+            local inventory = player.get_main_inventory()
+            if inventory ~= nil then
+                cloud:move_to_inventory(inventory, item)
+            end
+        end)
     end
 end
 
 ---@param player LuaPlayer
 function gui.cloud_storage.destroy(player)
+    if player.gui.relative.children[player.index] then
+        player.gui.relative.children[player.index].destroy()
+    end
+    if relative[player.index] then
+        relative[player.index].destroy()
+    end
+end
 
+---@param player LuaPlayer
+function gui.cloud_storage.reopen(player)
+    if player and relative[player.index] then
+        gui.cloud_storage.destroy(player)
+        gui.cloud_storage.create(player)
+    end
 end
