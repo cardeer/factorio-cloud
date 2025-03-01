@@ -1,8 +1,6 @@
 require('types')
 
-require('constants.general')
-require('constants.items')
-require('constants.gui')
+require('constants.main')
 
 require('utils.cloud_storage')
 require('utils.player')
@@ -33,8 +31,8 @@ end
 
 ---@param player LuaPlayer
 function open_storage_cloud_ui(player)
-    if player.gui.relative['cloud-storage-gui'] ~= nil then
-        player.gui.relative['cloud-storage-gui'].destroy()
+    if player.gui.relative[constants.gui.cloud_storage.name] ~= nil then
+        player.gui.relative[constants.gui.cloud_storage.name].destroy()
     end
 
     local items_per_row = 10
@@ -42,7 +40,7 @@ function open_storage_cloud_ui(player)
     ---@type LuaGuiElement
     local frame = player.gui.relative.add({
         type = 'frame',
-        name = 'cloud-storage-gui',
+        name = constants.gui.cloud_storage.name,
         direction = 'vertical',
         caption = 'Cloud Storage',
         anchor = {
@@ -52,22 +50,18 @@ function open_storage_cloud_ui(player)
 
     })
 
-    frame.location = { 50, 90 }
-    frame.style.maximal_width = 500
     -- frame.style.padding = 10
 
     local frame_scroll = frame.add({
         type = 'scroll-pane',
         name = 'frame-scroll',
-        vertical_scroll_policy = 'auto-and-reserve-space',
-        horizontal_scroll_policy = 'auto-and-reserve-space'
+        vertical_scroll_policy = 'auto',
+        horizontal_scroll_policy = 'auto'
     })
-
-    frame_scroll.style.width = items_per_row * (40 * player.display_scale) + (1 * (items_per_row - 1))
 
     local tab_content = frame_scroll.add({
         type = "flow",
-        name = "cloud_storage_gui_body",
+        name = "cloud_storage_gui_body"
     })
 
     tab_content.style.padding = 10
@@ -87,15 +81,15 @@ function open_storage_cloud_ui(player)
     tab_content.style.vertical_spacing = 1
 
     -- local cloud_items = cloud_storage:get_items()
-    -- for key, item in pairs(cloud_items) do
-    --     tab_content.add({
-    --         type = "sprite-button",
-    --         sprite = "item/" .. item.name,
-    --         number = item.count,
-    --         tags = { item = item },
-    --         style = 'inventory_slot'
-    --     })
-    -- end
+    for i = 1, 500 do
+        tab_content.add({
+            type = "sprite-button",
+            sprite = "item/iron-plate",
+            number = 100,
+            -- tags = { item = item },
+            style = 'inventory_slot'
+        })
+    end
 end
 
 ---@param event EventData.on_gui_opened
@@ -130,7 +124,10 @@ function on_gui_click(event)
             stack = el.count
         end
 
-        player.get_main_inventory().insert({ name = el.name, count = stack, })
+        player.get_main_inventory().insert({
+            name = el.name,
+            count = stack
+        })
         cloud_storage:remove(el)
     end
 end
@@ -155,12 +152,13 @@ script.on_event(defines.events.on_player_main_inventory_changed, function(event)
     print("on_player_main_inventory_changed" .. player.opened_gui_type)
 end)
 
-
 function fetch_content_storage_cloud()
     ---@type Cloud.StorageDetail[]
     items = {}
     for _, surface in pairs(game.surfaces) do
-        for _, container in pairs(surface.find_entities_filtered({ name = "cloud-storage" })) do
+        for _, container in pairs(surface.find_entities_filtered({
+            name = "cloud-storage"
+        })) do
             for _, item in pairs(container.get_inventory(defines.inventory.chest).get_contents()) do
                 table.insert(items, item)
             end

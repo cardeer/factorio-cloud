@@ -2,13 +2,13 @@
 function gui:create_storage_gui(player)
     local relative = player.gui.relative
 
-    if relative[gui_constants.cloud_storage.name] then
-        relative[gui_constants.cloud_storage.name].destroy()
+    if relative[constants.gui.cloud_storage.name] then
+        relative[constants.gui.cloud_storage.name].destroy()
     end
 
     local frame = player.gui.relative.add({
         type = 'frame',
-        name = gui_constants.cloud_storage.name,
+        name = constants.gui.cloud_storage.name,
         direction = 'vertical',
         caption = 'Cloud Storage',
         anchor = {
@@ -40,7 +40,9 @@ function gui:create_storage_gui(player)
             type = "sprite-button",
             sprite = "item/" .. item.name,
             number = item.count,
-            tags = { item = item },
+            tags = {
+                item = item
+            },
             style = 'inventory_slot'
         })
     end
