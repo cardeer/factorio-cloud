@@ -44,12 +44,14 @@ end
 ---param item Cloud.StorageDetail
 ---@return boolean
 function cloud:upload(item)
+    cloud_storage:add(item)
     return false
 end
 
 ---param item Cloud.StorageDetail
 ---@return boolean
 function cloud:download(item)
+    cloud_storage:remove(item)
     return false
 end
 
