@@ -16,26 +16,18 @@ cloud_uploader_item.place_result = constants.items.cloud_storage_uploader.name
 -- cloud_uploader_item.pictures = "item/" .. constants.items.cloud_storage_uploader.name
 -- cloud_uploader_item.animation = {}
 
-data:extend({
-    cloud_uploader,
-    cloud_uploader_item,
-    {
-        type = 'recipe',
+data:extend({cloud_uploader, cloud_uploader_item, {
+    type = 'recipe',
+    name = constants.items.cloud_storage_uploader.name,
+    ingredients = {{
+        type = 'item',
+        name = 'iron-plate',
+        amount = 100
+    }},
+    results = {{
+        type = 'item',
         name = constants.items.cloud_storage_uploader.name,
-        ingredients = {
-            {
-                type = 'item',
-                name = 'iron-plate',
-                amount = 100
-            }
-        },
-        results = {
-            {
-                type = 'item',
-                name = constants.items.cloud_storage_uploader.name,
-                amount = 1
-            }
-        },
-        place_result = constants.items.cloud_storage_uploader.name
-    }
-})
+        amount = 1
+    }},
+    place_result = constants.items.cloud_storage_uploader.name
+}})

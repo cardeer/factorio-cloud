@@ -27,8 +27,6 @@ function gui.cloud_storage.create(player)
         horizontal_scroll_policy = 'auto'
     })
 
-    frame_scroll.style.horizontally_stretchable = true
-
     local frame_footer = frame.add({
         type = 'frame',
         direction = 'horizontal',
@@ -70,7 +68,7 @@ function gui.cloud_storage.create(player)
             sprite = 'quality/' .. key
         })
 
-        sprite.style.size = { 16, 16 }
+        sprite.style.size = {16, 16}
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
             players:get(player.index).quality_filtered = key
@@ -89,20 +87,36 @@ function gui.cloud_storage.create(player)
         column_count = 10,
         draw_horizontal_lines = true
     })
+
     local quality = players:get(player.index).quality_filtered
+
     for _, item in pairs(cloud:get_items(quality)) do
+        -- local button = flib_gui.add(content, {
+        --     type = "sprite-button",
+        --     name = 'cloud-storage-item-button-' .. item.name .. "-" .. player.index,
+        --     sprite = "item/" .. item.name,
+        --     number = item.count and item.count or 0,
+        --     tags = {
+        --         item = item
+        --     },
+        --     style = 'inventory_slot'
+        -- })
+
         local item_button = content.add({
             type = "sprite-button",
             name = 'cloud-storage-item-button-' .. item.name .. "-" .. player.index,
             sprite = "item/" .. item.name,
             number = item.count and item.count or 0,
             tags = {
+                type = 'cloud-item-button',
                 item = item
             },
             style = 'inventory_slot'
         })
+
         gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
             local inventory = player.get_main_inventory()
+
             if inventory ~= nil then
                 cloud:move_to_inventory(inventory, item)
             end
