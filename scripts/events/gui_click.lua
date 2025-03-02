@@ -8,7 +8,6 @@ function events.on_gui_click(event)
 
         if handler ~= nil then
             handler()
-            gui.cloud_storage.reopen(player)
         end
     end
 end

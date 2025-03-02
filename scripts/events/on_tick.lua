@@ -32,12 +32,30 @@ local function do_upload()
 end
 
 local function do_download()
-
-end
-
-local function fetch_gui()
-    for player_index, _ in pairs(players) do
-        gui.cloud_storage.reopen(game.players[player_index])
+    for _, surface in pairs(game.surfaces) do
+        local surface_items = surface.find_entities_filtered({
+            name = constants.items.cloud_storage_downloader.name
+        })
+        for _, container in pairs(surface_items) do
+            local inventory = container.get_inventory(defines.inventory.chest)
+            if inventory ~= nil then
+                if not storage.container.filter[container.unit_number] or inventory:is_full() then
+                    goto continue
+                end
+                ---@type Cloud.StorageDetail
+                local item = {
+                    name = storage.container.filter[container.unit_number],
+                    quality = storage.container.quality[container.unit_number] or "normal",
+                    count = 1
+                }
+                if cloud:can_download(item) and inventory.can_insert(item) then
+                    local downloaded = cloud:download(item)
+                    inventory.insert(downloaded)
+                    script.raise_event(uploaded_event, {})
+                end
+                ::continue::
+            end
+        end
     end
 end
 
@@ -50,9 +68,8 @@ function events.on_tick(event)
     if event.tick % storage.download_tick == 0 then
         do_download()
     end
-    -- fetch_gui()
 end
 
 script.on_event(uploaded_event, function()
-    fetch_gui()
+    gui.cloud_storage.fetch_cloud_content()
 end)

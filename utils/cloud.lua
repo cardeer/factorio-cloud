@@ -47,6 +47,15 @@ function cloud_storage:remove(item)
 end
 
 ---@param item Cloud.StorageDetail
+---@return number
+function cloud_storage:get_count(item)
+    if not storage.cloud_items[get_key(item)] then
+        return 0
+    end
+    return storage.cloud_items[get_key(item)].count
+end
+
+---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud:upload(item)
     cloud_storage:add(item)
@@ -54,10 +63,17 @@ function cloud:upload(item)
 end
 
 ---@param item Cloud.StorageDetail
----@return boolean
+---@return ItemStackDefinition
 function cloud:download(item)
     cloud_storage:remove(item)
-    return false
+    ---@type ItemStackDefinition
+    return item
+end
+
+---@param item Cloud.StorageDetail
+---@return boolean
+function cloud:can_download(item)
+    return cloud_storage:get_count(item) >= item.count and true or false
 end
 
 ---@param item Cloud.StorageDetail
@@ -112,9 +128,9 @@ function cloud:get_items(quality)
     local items = {}
     for key, item in pairs(storage.cloud_items) do
         if get_key({
-            name = item.name,
-            quality = quality
-        }) == key then
+                name = item.name,
+                quality = quality
+            }) == key then
             table.insert(items, item)
         end
     end

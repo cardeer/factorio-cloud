@@ -2,6 +2,12 @@ function on_init()
     ---@type Cloud.Storage
     storage.cloud_items = {}
 
+    ---@type Container.Filtered
+    storage.container = {
+        filter = {},
+        quality = {}
+    }
+
     storage.stacks_multiplier = 1
     storage.gui_fetch_tick = 100
     storage.upload_tick = 10

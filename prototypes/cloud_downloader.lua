@@ -1,13 +1,11 @@
 -- entity
-local cloud_downloader = table.deepcopy(data.raw['logistic-container']['requester-chest'])
+local cloud_downloader = table.deepcopy(data.raw['container']['steel-chest'])
 cloud_downloader.name = constants.items.cloud_storage_downloader.name
 cloud_downloader.minable.result = constants.items.cloud_storage_downloader.name
 cloud_downloader.icon = constants.general.graphics_location .. '/cloud-storage/downloader.png'
 cloud_downloader.icon_size = 200
-cloud_downloader.order = 'b'
-cloud_downloader.max_logistic_slots = 1
+-- cloud_downloader.order = 'b'
 cloud_downloader.inventory_size = 1
-cloud_downloader.render_not_in_network_icon = false
 cloud_downloader.picture = {
     filename = constants.general.graphics_location .. '/cloud-storage/downloader.png',
     width = 200,
@@ -16,7 +14,7 @@ cloud_downloader.picture = {
 }
 
 -- item
-local cloud_downloader_item = table.deepcopy(data.raw["item"]['requester-chest'])
+local cloud_downloader_item = table.deepcopy(data.raw["item"]['steel-chest'])
 cloud_downloader_item.name = constants.items.cloud_storage_downloader.name
 cloud_downloader_item.icon = constants.general.graphics_location .. '/cloud-storage/downloader.png'
 cloud_downloader_item.icon_size = 200
