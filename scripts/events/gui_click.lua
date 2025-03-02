@@ -8,7 +8,6 @@ function events.on_gui_click(event)
 
         if handler ~= nil then
             handler()
-            storage.stacks_multiplier = 5
             gui.cloud_storage.reopen(player)
         end
     end
