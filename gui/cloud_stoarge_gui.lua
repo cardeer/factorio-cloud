@@ -1,6 +1,74 @@
 ---@type { [integer]: LuaGuiElement}
 local relative = {}
 
+---@type { [integer]: LuaGuiElement}
+local display_content = {}
+
+---@type { [integer]: string}
+local current_display_quality = {}
+
+---@param player LuaPlayer
+function gui.cloud_storage.render_content(player)
+    if not display_content[player.index] then
+        return
+    end
+
+    display_content[player.index].clear()
+    local quality = players:get(player.index).quality_filtered
+    current_display_quality[player.index] = quality
+    local item_count = 0
+    local column_length = 10
+    local content = display_content[player.index].add({
+        type = "table",
+        name = "cloud-storage-content" .. "-" .. player.index,
+        column_count = column_length
+
+    })
+    content.style.vertically_stretchable = true
+    content.style.vertical_spacing = 0
+    content.style.horizontal_spacing = 0
+
+    for _, item in pairs(cloud:get_items(quality)) do
+        item_count = item_count + 1
+        local item_button = content.add({
+            type = "sprite-button",
+            name = 'cloud-storage-item-button-' .. player.index .. "-" .. item.name,
+            sprite = "item/" .. item.name,
+            number = item.count and item.count or 0,
+            tags = {
+                type = 'cloud-item-button',
+                item = item
+            },
+            style = 'inventory_slot'
+        })
+        if players:get(player.index).quality_filtered ~= "normal" then
+            sprite = item_button.add({
+                type = 'sprite',
+                resize_to_sprite = false,
+                sprite = 'quality/' .. item.quality
+            })
+            sprite.style.size = { 13, 13 }
+        end
+        gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
+            local inventory = player.get_main_inventory()
+
+            if inventory ~= nil then
+                cloud:move_to_inventory(inventory, item)
+            end
+        end)
+    end
+
+    if item_count < column_length then
+        local count = column_length - item_count
+        for i = 1, count do
+            content.add({
+                type = "sprite-button",
+                style = 'inventory_slot'
+            })
+        end
+    end
+end
+
 ---@param player LuaPlayer
 function gui.cloud_storage.create(player)
     gui.cloud_storage.destroy(player)
@@ -26,9 +94,11 @@ function gui.cloud_storage.create(player)
         style = "entity_frame"
     })
 
-    local frame_scroll_content = frame_content.add({
+    -- must update before render_content
+    display_content[player.index] = frame_content.add({
         type = "scroll-pane"
     })
+    gui.cloud_storage.render_content(player)
 
     local frame_footer = frame.add({
         type = 'frame',
@@ -69,10 +139,11 @@ function gui.cloud_storage.create(player)
             sprite = 'quality/' .. key
         })
 
-        sprite.style.size = {16, 16}
+        sprite.style.size = { 16, 16 }
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
             players:get(player.index).quality_filtered = key
+            current_display_quality[player.index] = key
 
             for k, v in pairs(buttons) do
                 v.toggled = k == players:get(player.index).quality_filtered
@@ -80,61 +151,6 @@ function gui.cloud_storage.create(player)
         end)
 
         ::continue::
-    end
-
-    local column_length = 10
-
-    local content = frame_scroll_content.add({
-        type = "table",
-        name = "cloud-storage-content" .. "-" .. player.index,
-        column_count = column_length
-
-    })
-    content.style.vertically_stretchable = true
-    content.style.vertical_spacing = 0
-    content.style.horizontal_spacing = 0
-
-    local quality = players:get(player.index).quality_filtered
-
-    local item_count = 0
-    for _, item in pairs(cloud:get_items(quality)) do
-        item_count = item_count + 1
-        local item_button = content.add({
-            type = "sprite-button",
-            name = 'cloud-storage-item-button-' .. item.name .. "-" .. player.index,
-            sprite = "item/" .. item.name,
-            number = item.count and item.count or 0,
-            tags = {
-                type = 'cloud-item-button',
-                item = item
-            },
-            style = 'inventory_slot'
-        })
-        if players:get(player.index).quality_filtered ~= "normal" then
-            sprite = item_button.add({
-                type = 'sprite',
-                resize_to_sprite = false,
-                sprite = 'quality/' .. item.quality
-            })
-            sprite.style.size = {13, 13}
-        end
-        gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
-            local inventory = player.get_main_inventory()
-
-            if inventory ~= nil then
-                cloud:move_to_inventory(inventory, item)
-            end
-        end)
-    end
-
-    if item_count < column_length then
-        local count = column_length - item_count
-        for i = 1, count do
-            content.add({
-                type = "sprite-button",
-                style = 'inventory_slot'
-            })
-        end
     end
 end
 
@@ -153,5 +169,31 @@ function gui.cloud_storage.reopen(player)
     if player and relative[player.index] then
         gui.cloud_storage.destroy(player)
         gui.cloud_storage.create(player)
+    end
+end
+
+---@param item Cloud.StorageDetail
+function gui.cloud_storage.fetch_item_stack(item)
+    for _, player in pairs(game.players) do
+        if not display_content[player.index] then
+            goto continue
+        end
+        if cloud:item_count(item) == 0 or current_display_quality[player.index] ~= item.quality or not display_content[player.index].children then
+            gui.cloud_storage.render_content(player)
+            goto continue
+        end
+        local is_update = false
+        for _, el in pairs(display_content[player.index].children[1].children) do
+            local button_name = 'cloud-storage-item-button-' .. player.index .. "-" .. item.name
+            if el.name == button_name then
+                is_update = true
+                el.number = cloud:item_count(item)
+            end
+        end
+        if not is_update then
+            gui.cloud_storage.render_content(player)
+        end
+
+        ::continue::
     end
 end

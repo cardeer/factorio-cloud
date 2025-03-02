@@ -31,6 +31,7 @@ function cloud_storage:add(item)
     else
         storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
     end
+    script.raise_event(events.on_cloud_updated_event, { item = item })
 end
 
 ---@param item Cloud.StorageDetail
@@ -43,6 +44,7 @@ function cloud_storage:remove(item)
         else
             storage.cloud_items[get_key(item)] = nil
         end
+        script.raise_event(events.on_cloud_updated_event, { item = item })
     end
 end
 
@@ -86,31 +88,36 @@ end
 ---@param item Cloud.StorageDetail
 function cloud:move_to_inventory(inventory, item)
     local prototype_stack = get_prototype_stack(item.name)
-    local item_stack = prototype_stack < item.count and prototype_stack or prototype_stack
+    local item_stack = prototype_stack < item.count and prototype_stack or item.count
 
     local maximum_insert_to_inventory = inventory.get_insertable_count({
         name = item.name,
         quality = item.quality
     })
 
-    local minimum_insert_stack = maximum_insert_to_inventory > item_stack and item_stack or maximum_insert_to_inventory
+    local insert_stack = maximum_insert_to_inventory > item_stack and item_stack or maximum_insert_to_inventory
 
     ---@type Cloud.StorageDetail
     local item_inserted = {
         name = item.name,
         quality = item.quality,
-        count = minimum_insert_stack
+        count = insert_stack
     }
 
     inventory.insert({
         name = item.name,
         quality = item.quality,
-        count = minimum_insert_stack
+        count = insert_stack
     })
 
     cloud_storage:remove(item_inserted)
 
     return item_inserted
+end
+
+---@param item Cloud.StorageDetail | ItemStackDefinition
+function cloud:item_count(item)
+    return cloud_storage:get_count(item)
 end
 
 function cloud:item_names()

@@ -1,5 +1,3 @@
-uploaded_event = script.generate_event_name()
-
 local function do_upload()
     for _, surface in pairs(game.surfaces) do
         local surface_items = surface.find_entities_filtered({
@@ -22,8 +20,6 @@ local function do_upload()
                             count = 1,
                             quality = item.quality
                         })
-
-                        script.raise_event(uploaded_event, {})
                     end
                 end
             end
@@ -51,7 +47,6 @@ local function do_download()
                 if cloud:can_download(item) and inventory.can_insert(item) then
                     local downloaded = cloud:download(item)
                     inventory.insert(downloaded)
-                    script.raise_event(uploaded_event, {})
                 end
                 ::continue::
             end
@@ -69,7 +64,3 @@ function events.on_tick(event)
         do_download()
     end
 end
-
-script.on_event(uploaded_event, function()
-    gui.cloud_storage.fetch_cloud_content()
-end)
