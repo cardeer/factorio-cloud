@@ -8,7 +8,7 @@ local display_content = {}
 local current_display_quality = {}
 
 ---@param player LuaPlayer
-function gui.cloud_storage.render_content(player)
+function gui.cloud_storage_gui.render_content(player)
     if not display_content[player.index] then
         return
     end
@@ -70,8 +70,8 @@ function gui.cloud_storage.render_content(player)
 end
 
 ---@param player LuaPlayer
-function gui.cloud_storage.create(player)
-    gui.cloud_storage.destroy(player)
+function gui.cloud_storage_gui.create(player)
+    gui.cloud_storage_gui.destroy(player)
 
     local frame = player.gui.relative.add({
         type = 'frame',
@@ -98,7 +98,7 @@ function gui.cloud_storage.create(player)
     display_content[player.index] = frame_content.add({
         type = "scroll-pane"
     })
-    gui.cloud_storage.render_content(player)
+    gui.cloud_storage_gui.render_content(player)
 
     local frame_footer = frame.add({
         type = 'frame',
@@ -155,7 +155,7 @@ function gui.cloud_storage.create(player)
 end
 
 ---@param player LuaPlayer
-function gui.cloud_storage.destroy(player)
+function gui.cloud_storage_gui.destroy(player)
     if player.gui.relative.children[player.index] then
         player.gui.relative.children[player.index].destroy()
     end
@@ -165,21 +165,21 @@ function gui.cloud_storage.destroy(player)
 end
 
 ---@param player LuaPlayer
-function gui.cloud_storage.reopen(player)
+function gui.cloud_storage_gui.reopen(player)
     if player and relative[player.index] then
-        gui.cloud_storage.destroy(player)
-        gui.cloud_storage.create(player)
+        gui.cloud_storage_gui.destroy(player)
+        gui.cloud_storage_gui.create(player)
     end
 end
 
 ---@param item Cloud.StorageDetail
-function gui.cloud_storage.fetch_item_stack(item)
+function gui.cloud_storage_gui.fetch_item_stack(item)
     for _, player in pairs(game.players) do
-        if not display_content[player.index] then
+        if not display_content[player.index] or not display_content[player.index].valid then
             goto continue
         end
         if cloud:item_count(item) == 0 or current_display_quality[player.index] ~= item.quality or not display_content[player.index].children then
-            gui.cloud_storage.render_content(player)
+            gui.cloud_storage_gui.render_content(player)
             goto continue
         end
         local is_update = false
@@ -191,7 +191,7 @@ function gui.cloud_storage.fetch_item_stack(item)
             end
         end
         if not is_update then
-            gui.cloud_storage.render_content(player)
+            gui.cloud_storage_gui.render_content(player)
         end
 
         ::continue::

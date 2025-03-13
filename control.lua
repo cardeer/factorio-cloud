@@ -1,6 +1,7 @@
 require('constants.main')
 require('types')
 
+require('utils.downloader')
 require('utils.player')
 require('utils.cloud')
 

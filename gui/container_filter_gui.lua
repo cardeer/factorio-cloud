@@ -30,13 +30,11 @@ function gui.container_filter_gui.create(player, entity)
     })
     frame_content.style.horizontal_align = "center"
 
-    local filter = storage.container.filter[entity.unit_number] and storage.container.filter[entity.unit_number] or nil
-
     frame_content.add({
         type = "choose-elem-button",
         name = "filter_slot-" .. player.index .. "-" .. entity.unit_number,
         elem_type = "item",
-        item = filter,
+        item = storage_downloader.get(entity.unit_number).filter,
 
     })
 
@@ -49,9 +47,7 @@ function gui.container_filter_gui.create(player, entity)
 
     local qualities = prototypes.quality
     local buttons = {}
-    if storage.container.quality[entity.unit_number] then
-        storage.container.quality[entity.unit_number] = "normal"
-    end
+
     for _quality in pairs(qualities) do
         if _quality == 'quality-unknown' then
             goto continue
@@ -60,7 +56,7 @@ function gui.container_filter_gui.create(player, entity)
         local button = footer_flow.add({
             type = 'button',
             name = 'storage-container-quality-button-' .. _quality .. "-" .. player.index,
-            toggled = (storage.container.quality[entity.unit_number] or "normal") == _quality
+            toggled = storage_downloader.get(entity.unit_number).quality == _quality
         })
 
         button.style = 'tool_button'
@@ -76,7 +72,7 @@ function gui.container_filter_gui.create(player, entity)
 
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
-            storage.container.quality[entity.unit_number] = _quality
+            storage_downloader.get(entity.unit_number).quality = _quality
             for k, v in pairs(buttons) do
                 v.toggled = k == _quality
             end
@@ -102,12 +98,3 @@ function gui.container_filter_gui.destroy(player)
         entity_target[player.index] = nil
     end
 end
-
--- ---@param player LuaPlayer
--- ---@param entity LuaEntity
--- function gui.container_filter_gui.reopen(player, entity)
---     if player and relative[player.index] then
---         gui.container_filter_gui.destroy(player)
---         gui.container_filter_gui.create(player, entity)
---     end
--- end

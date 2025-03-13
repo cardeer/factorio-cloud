@@ -35,13 +35,13 @@ local function do_download()
         for _, container in pairs(surface_items) do
             local inventory = container.get_inventory(defines.inventory.chest)
             if inventory ~= nil then
-                if not storage.container.filter[container.unit_number] or inventory:is_full() then
+                if not storage_downloader.get(container.unit_number).filter or inventory:is_full() then
                     goto continue
                 end
                 ---@type Cloud.StorageDetail
                 local item = {
-                    name = storage.container.filter[container.unit_number],
-                    quality = storage.container.quality[container.unit_number] or "normal",
+                    name = storage_downloader.get(container.unit_number).filter,
+                    quality = storage_downloader.get(container.unit_number).quality,
                     count = 1
                 }
                 if cloud:can_download(item) and inventory.can_insert(item) then

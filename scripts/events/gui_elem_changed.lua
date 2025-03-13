@@ -8,9 +8,6 @@ function events.on_gui_elem_changed(event)
         if not frame then return end
 
         local entity = frame.get_entity_target(player)
-        storage.container.filter[entity.unit_number] = element.elem_value
-        if not storage.container.quality[entity.unit_number] then
-            storage.container.quality[entity.unit_number] = "normal"
-        end
+        storage_downloader.get(entity.unit_number).filter = element.elem_value
     end
 end

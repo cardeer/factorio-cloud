@@ -3,7 +3,7 @@ function events.on_gui_opened(event)
     local player = game.players[event.player_index]
 
     if (player.opened_self == true and event.gui_type == defines.gui_type.controller) then
-        gui.cloud_storage.create(player)
+        gui.cloud_storage_gui.create(player)
     end
 
     local entity = event.entity
