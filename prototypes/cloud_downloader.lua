@@ -30,8 +30,23 @@ data:extend({
         ingredients = {
             {
                 type = 'item',
-                name = 'steel-plate',
-                amount = 100
+                name = 'requester-chest',
+                amount = 5
+            },
+            {
+                type = 'item',
+                name = 'solar-panel',
+                amount = 5
+            },
+            {
+                type = 'item',
+                name = 'accumulator',
+                amount = 5
+            },
+            {
+                type = 'item',
+                name = 'beacon',
+                amount = 1
             }
         },
         results = {

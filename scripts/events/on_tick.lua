@@ -56,11 +56,13 @@ end
 
 ---@param event EventData.on_tick
 function events.on_tick(event)
-    if event.tick % storage.upload_tick == 0 then
+    local tick_upload = settings.startup["cloud_storage_speed_upload"].value or 10
+    if event.tick % tick_upload == 0 then
         do_upload()
     end
 
-    if event.tick % storage.download_tick == 0 then
+    local tick_download = settings.startup["cloud_storage_speed_download"].value or 10
+    if event.tick % tick_download == 0 then
         do_download()
     end
 end

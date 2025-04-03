@@ -3,7 +3,7 @@ function events.on_gui_elem_changed(event)
     local player = game.get_player(event.player_index)
     local element = event.element
 
-    if player and element.name:find("filter_slot-") then
+    if player and element.name:find("cloud_dowmload_filter-") then
         local frame = gui.container_filter_gui
         if not frame then return end
 

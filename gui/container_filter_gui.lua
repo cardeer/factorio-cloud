@@ -32,7 +32,7 @@ function gui.container_filter_gui.create(player, entity)
 
     frame_content.add({
         type = "choose-elem-button",
-        name = "filter_slot-" .. player.index .. "-" .. entity.unit_number,
+        name = "cloud_dowmload_filter-" .. player.index .. "-" .. entity.unit_number,
         elem_type = "item",
         item = storage_downloader.get(entity.unit_number).filter,
 

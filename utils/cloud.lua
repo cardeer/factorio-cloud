@@ -1,20 +1,39 @@
+---@type Cloud.Storage
+local storage = {}
 local cloud_storage = {}
-cloud = {}
 
 local function get_key(item)
     return item.name .. "-" .. (item.quality or "normal")
 end
 
+---@param item_name string
+---@return int
 local function get_prototype_stack(item_name)
     return prototypes.item[item_name] and prototypes.item[item_name].stack_size or 1
+end
+
+---@return int
+local function get_multiplier_by_research()
+    local tech_researched = {}
+    for i = 1, 100 do
+        local tech = game.forces.player.technologies['cloud-storage-' .. i]
+        if not tech then
+            break
+        end
+        if tech.researched then
+            table.insert(tech_researched, tech)
+        end
+    end
+    return (#tech_researched + 1) * 1.25
 end
 
 ---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud_storage:is_full(item)
     local stack_size = (prototypes.item[item.name] and prototypes.item[item.name].stack_size or 1)
-    local limit = stack_size * storage.stacks_multiplier
-    if not storage.cloud_items[get_key(item)] or storage.cloud_items[get_key(item)].count < limit then
+    local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * get_multiplier_by_research()
+
+    if not storage[get_key(item)] or storage[get_key(item)].count < limit then
         return false
     else
         return true
@@ -26,23 +45,23 @@ function cloud_storage:add(item)
     if cloud_storage:is_full(item) then
         return
     end
-    if storage.cloud_items[get_key(item)] == nil or storage.cloud_items[get_key(item)].quality ~= item.quality then
-        storage.cloud_items[get_key(item)] = item
+    if storage[get_key(item)] == nil or storage[get_key(item)].quality ~= item.quality then
+        storage[get_key(item)] = item
     else
-        storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
+        storage[get_key(item)].count = storage[get_key(item)].count + item.count
     end
     script.raise_event(events.on_cloud_updated_event, { item = item })
 end
 
 ---@param item Cloud.StorageDetail
 function cloud_storage:remove(item)
-    if storage.cloud_items[get_key(item)] ~= nil and storage.cloud_items[get_key(item)].quality == item.quality then
-        local total = storage.cloud_items[get_key(item)].count - item.count
+    if storage[get_key(item)] ~= nil and storage[get_key(item)].quality == item.quality then
+        local total = storage[get_key(item)].count - item.count
 
         if total > 0 then
-            storage.cloud_items[get_key(item)].count = total
+            storage[get_key(item)].count = total
         else
-            storage.cloud_items[get_key(item)] = nil
+            storage[get_key(item)] = nil
         end
         script.raise_event(events.on_cloud_updated_event, { item = item })
     end
@@ -51,11 +70,13 @@ end
 ---@param item Cloud.StorageDetail
 ---@return number
 function cloud_storage:get_count(item)
-    if not storage.cloud_items[get_key(item)] then
+    if not storage[get_key(item)] then
         return 0
     end
-    return storage.cloud_items[get_key(item)].count
+    return storage[get_key(item)].count
 end
+
+cloud = {}
 
 ---@param item Cloud.StorageDetail
 ---@return boolean
@@ -122,7 +143,7 @@ end
 
 function cloud:item_names()
     local item_names = {}
-    for _, item in pairs(storage.cloud_items) do
+    for _, item in pairs(storage) do
         table.insert(item_names, item.name)
     end
     return item_names
@@ -133,7 +154,7 @@ end
 function cloud:get_items(quality)
     ---@type Cloud.StorageDetail[]
     local items = {}
-    for key, item in pairs(storage.cloud_items) do
+    for key, item in pairs(storage) do
         if get_key({
                 name = item.name,
                 quality = quality

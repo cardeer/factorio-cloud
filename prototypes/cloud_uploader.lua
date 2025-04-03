@@ -20,18 +20,39 @@ cloud_uploader_item.icon_size = 200
 cloud_uploader_item.stack_size = 50
 cloud_uploader_item.place_result = constants.items.cloud_storage_uploader.name
 
-data:extend({cloud_uploader, cloud_uploader_item, {
-    type = 'recipe',
-    name = constants.items.cloud_storage_uploader.name,
-    ingredients = {{
-        type = 'item',
-        name = 'iron-plate',
-        amount = 100
-    }},
-    results = {{
-        type = 'item',
+data:extend({
+    cloud_uploader,
+    cloud_uploader_item,
+    {
+        type = 'recipe',
         name = constants.items.cloud_storage_uploader.name,
-        amount = 1
-    }},
-    place_result = constants.items.cloud_storage_uploader.name
-}})
+        ingredients = {
+            {
+                type = 'item',
+                name = 'passive-provider-chest',
+                amount = 5
+            },
+            {
+                type = 'item',
+                name = 'solar-panel',
+                amount = 5
+            },
+            {
+                type = 'item',
+                name = 'accumulator',
+                amount = 5
+            },
+            {
+                type = 'item',
+                name = 'beacon',
+                amount = 1
+            }
+        },
+        results = { {
+            type = 'item',
+            name = constants.items.cloud_storage_uploader.name,
+            amount = 1
+        } },
+        place_result = constants.items.cloud_storage_uploader.name
+    }
+})
