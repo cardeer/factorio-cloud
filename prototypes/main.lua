@@ -171,7 +171,7 @@ for i, unit in pairs(cloud_ingredients) do
         local tech = {
             type = "technology",
             name = new_tech_name,
-            icon = constants.general.graphics_location .. '/cloud-storage/uploader.png',
+            icon = constants.items.cloud_storage_uploader.icon,
             icon_size = 200,
             effects = {},
             prerequisites = {},
@@ -179,6 +179,12 @@ for i, unit in pairs(cloud_ingredients) do
             localised_description = "Cloud maximum is " .. increase_stack .. " stack per item"
         }
         if not tech_added then
+            tech.prerequisites = {
+                "logistic-system",
+                "solar-energy",
+                "electric-energy-accumulators",
+                "effect-transmission"
+            }
             tech.effects = {
                 {
                     type = "unlock-recipe",

@@ -160,6 +160,9 @@ end
 
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.destroy(player)
+    if player.gui.relative.children[player.index] then
+        player.gui.relative.children[player.index].destroy()
+    end
     if relative[player.index] then
         relative[player.index].destroy()
     end
