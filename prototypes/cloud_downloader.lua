@@ -26,6 +26,7 @@ data:extend({
     cloud_downloader_item,
     {
         type = 'recipe',
+        enabled = false,
         name = constants.items.cloud_storage_downloader.name,
         ingredients = {
             {

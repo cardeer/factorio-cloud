@@ -72,6 +72,9 @@ end
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.create(player)
     gui.cloud_storage_gui.destroy(player)
+    if not cloud:is_available() then
+        return
+    end
 
     local frame = player.gui.relative.add({
         type = 'frame',
@@ -148,6 +151,7 @@ function gui.cloud_storage_gui.create(player)
             for k, v in pairs(buttons) do
                 v.toggled = k == players:get(player.index).quality_filtered
             end
+            gui.cloud_storage_gui.render_content(player)
         end)
 
         ::continue::
@@ -156,9 +160,6 @@ end
 
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.destroy(player)
-    if player.gui.relative.children[player.index] then
-        player.gui.relative.children[player.index].destroy()
-    end
     if relative[player.index] then
         relative[player.index].destroy()
     end

@@ -25,6 +25,7 @@ data:extend({
     cloud_uploader_item,
     {
         type = 'recipe',
+        enabled = false,
         name = constants.items.cloud_storage_uploader.name,
         ingredients = {
             {

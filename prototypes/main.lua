@@ -167,6 +167,7 @@ end
 for i, unit in pairs(cloud_ingredients) do
     local new_tech_name = constants.items.technology.prefix .. i
     if not data.raw.technology[new_tech_name] then
+        local increase_stack = i * settings.startup["cloud_storage_stack_multiplier"].value
         local tech = {
             type = "technology",
             name = new_tech_name,
@@ -175,8 +176,20 @@ for i, unit in pairs(cloud_ingredients) do
             effects = {},
             prerequisites = {},
             unit = unit,
+            localised_description = "Cloud maximum is " .. increase_stack .. " stack per item"
         }
-        if (tech_added) then
+        if not tech_added then
+            tech.effects = {
+                {
+                    type = "unlock-recipe",
+                    recipe = constants.items.cloud_storage_downloader.name
+                },
+                {
+                    type = "unlock-recipe",
+                    recipe = constants.items.cloud_storage_uploader.name
+                },
+            }
+        else
             tech.prerequisites = { tech_added, unit.ingredients[i][1] }
         end
         data:extend({ tech })

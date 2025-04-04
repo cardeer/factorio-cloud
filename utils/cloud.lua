@@ -13,25 +13,21 @@ local function get_prototype_stack(item_name)
 end
 
 ---@return int
-local function get_multiplier_by_research()
-    local tech_researched = {}
+local function count_researched_technology()
     for i = 1, 100 do
         local tech = game.forces.player.technologies[constants.items.technology.prefix .. i]
-        if not tech then
-            break
-        end
-        if tech.researched then
-            table.insert(tech_researched, tech)
+        if not tech or not tech.researched then
+            return (i - 1)
         end
     end
-    return (#tech_researched + 1) * 1.25
+    return 0
 end
 
 ---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud_storage:is_full(item)
     local stack_size = (prototypes.item[item.name] and prototypes.item[item.name].stack_size or 1)
-    local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * get_multiplier_by_research()
+    local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * count_researched_technology()
 
     if not storage[get_key(item)] or storage[get_key(item)].count < limit then
         return false
@@ -163,6 +159,11 @@ function cloud:get_items(quality)
         end
     end
     return items
+end
+
+---@return boolean
+function cloud:is_available()
+    return count_researched_technology() > 0
 end
 
 return cloud
