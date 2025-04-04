@@ -16,7 +16,7 @@ end
 local function get_multiplier_by_research()
     local tech_researched = {}
     for i = 1, 100 do
-        local tech = game.forces.player.technologies['cloud-storage-' .. i]
+        local tech = game.forces.player.technologies[constants.items.technology.prefix .. i]
         if not tech then
             break
         end

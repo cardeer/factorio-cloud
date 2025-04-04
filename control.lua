@@ -5,8 +5,6 @@ require('utils.downloader')
 require('utils.player')
 require('utils.cloud')
 
-require('scripts.scripts')
-
 require('scripts.events')
 
 require('gui.main')

@@ -2,12 +2,12 @@
 local cloud_downloader = table.deepcopy(data.raw['container']['steel-chest'])
 cloud_downloader.name = constants.items.cloud_storage_downloader.name
 cloud_downloader.minable.result = constants.items.cloud_storage_downloader.name
-cloud_downloader.icon = constants.general.graphics_location .. '/cloud-storage/downloader.png'
+cloud_downloader.icon = constants.items.cloud_storage_downloader.icon
 cloud_downloader.icon_size = 200
 -- cloud_downloader.order = 'b'
 cloud_downloader.inventory_size = 1
 cloud_downloader.picture = {
-    filename = constants.general.graphics_location .. '/cloud-storage/downloader.png',
+    filename = constants.items.cloud_storage_downloader.icon,
     width = 200,
     height = 200,
     scale = 1 / (250 / 32),
@@ -16,7 +16,7 @@ cloud_downloader.picture = {
 -- item
 local cloud_downloader_item = table.deepcopy(data.raw["item"]['steel-chest'])
 cloud_downloader_item.name = constants.items.cloud_storage_downloader.name
-cloud_downloader_item.icon = constants.general.graphics_location .. '/cloud-storage/downloader.png'
+cloud_downloader_item.icon = constants.items.cloud_storage_downloader.icon
 cloud_downloader_item.icon_size = 200
 cloud_downloader_item.stack_size = 50
 cloud_downloader_item.place_result = constants.items.cloud_storage_downloader.name

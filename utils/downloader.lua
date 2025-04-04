@@ -15,5 +15,3 @@ function storage_downloader.get(id)
 
     return storage_downloader[id]
 end
-
-return storage_downloader

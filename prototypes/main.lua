@@ -165,7 +165,7 @@ end
 
 
 for i, unit in pairs(cloud_ingredients) do
-    local new_tech_name = 'cloud-storage-' .. i
+    local new_tech_name = constants.items.technology.prefix .. i
     if not data.raw.technology[new_tech_name] then
         local tech = {
             type = "technology",
