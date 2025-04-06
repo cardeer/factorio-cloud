@@ -1,6 +1,10 @@
 ---@type Cloud.Storage
 local cloud_storage = {}
 
+if not storage.cloud_items then
+    storage.cloud_items = {}
+end
+
 local function get_key(item)
     return item.name .. "-" .. (item.quality or "normal")
 end
@@ -22,22 +26,13 @@ local function count_researched_technology()
     return 0
 end
 
-function cloud_storage:get_items()
-    if storage.cloud_items == nil then
-        storage.cloud_items = {}
-    end
-
-    return storage.cloud_items
-end
-
 ---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud_storage:is_full(item)
     local stack_size = (prototypes.item[item.name] and prototypes.item[item.name].stack_size or 1)
     local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * count_researched_technology()
-    local items = cloud_storage:get_items()
 
-    if not items[get_key(item)] or items[get_key(item)].count < limit then
+    if not storage.cloud_items[get_key(item)] or storage.cloud_items[get_key(item)].count < limit then
         return false
     else
         return true
@@ -165,9 +160,9 @@ function cloud:get_items(quality)
     local cloud_items = storage.cloud_items or {}
     for key, item in pairs(cloud_items) do
         if get_key({
-            name = item.name,
-            quality = quality
-        }) == key then
+                name = item.name,
+                quality = quality
+            }) == key then
             table.insert(items, item)
         end
     end
