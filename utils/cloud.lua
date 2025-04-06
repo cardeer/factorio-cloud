@@ -1,6 +1,10 @@
 ---@type Cloud.Storage
 local cloud_storage = {}
 
+if not storage.cloud_items then
+    storage.cloud_items = {}
+end
+
 local function get_key(item)
     return item.name .. "-" .. (item.quality or "normal")
 end
@@ -45,7 +49,9 @@ function cloud_storage:add(item)
     else
         storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
     end
-    script.raise_event(events.on_cloud_updated_event, { item = item })
+    script.raise_event(events.on_cloud_updated_event, {
+        item = item
+    })
 end
 
 ---@param item Cloud.StorageDetail
@@ -58,7 +64,9 @@ function cloud_storage:remove(item)
         else
             storage.cloud_items[get_key(item)] = nil
         end
-        script.raise_event(events.on_cloud_updated_event, { item = item })
+        script.raise_event(events.on_cloud_updated_event, {
+            item = item
+        })
     end
 end
 
@@ -149,7 +157,8 @@ end
 function cloud:get_items(quality)
     ---@type Cloud.StorageDetail[]
     local items = {}
-    for key, item in pairs(storage.cloud_items) do
+    local cloud_items = storage.cloud_items or {}
+    for key, item in pairs(cloud_items) do
         if get_key({
                 name = item.name,
                 quality = quality

@@ -1,17 +1,23 @@
-storage_downloader = {}
-
 ---@type Downloader.Filtered
 local filter = {
     filter = nil,
-    quality = 'normal',
+    quality = 'normal'
 }
+
+if not storage_downloader then
+    storage_downloader = {}
+end
 
 ---@param id number
 ---@return Downloader.Filtered
 function storage_downloader.get(id)
-    if not storage_downloader[id] then
-        storage_downloader[id] = flib_table.deep_copy(filter)
+    if not storage.downloader_selected then
+        storage.downloader_selected = {}
     end
 
-    return storage_downloader[id]
+    if not storage.downloader_selected[id] then
+        storage.downloader_selected[id] = flib_table.deep_copy(filter)
+    end
+
+    return storage.downloader_selected[id]
 end

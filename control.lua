@@ -1,12 +1,11 @@
 require('constants.main')
 require('types')
+require('scripts.events')
 
 require('utils.downloader')
 require('utils.player')
 require('utils.cloud')
 
-require('scripts.events')
-require('scripts.scripts')
 
 require('gui.main')
 
@@ -19,6 +18,3 @@ script.on_event(defines.events.on_gui_opened, events.on_gui_opened)
 script.on_event(defines.events.on_gui_closed, events.on_gui_closed)
 script.on_event(defines.events.on_gui_click, events.on_gui_click)
 script.on_event(defines.events.on_tick, events.on_tick)
-
-script.on_init(on_init)
-script.on_load(on_load)
