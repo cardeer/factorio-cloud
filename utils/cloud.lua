@@ -22,13 +22,22 @@ local function count_researched_technology()
     return 0
 end
 
+function cloud_storage:get_items()
+    if storage.cloud_items == nil then
+        storage.cloud_items = {}
+    end
+
+    return storage.cloud_items
+end
+
 ---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud_storage:is_full(item)
     local stack_size = (prototypes.item[item.name] and prototypes.item[item.name].stack_size or 1)
     local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * count_researched_technology()
+    local items = cloud_storage:get_items()
 
-    if not storage.cloud_items[get_key(item)] or storage.cloud_items[get_key(item)].count < limit then
+    if not items[get_key(item)] or items[get_key(item)].count < limit then
         return false
     else
         return true
@@ -45,7 +54,9 @@ function cloud_storage:add(item)
     else
         storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
     end
-    script.raise_event(events.on_cloud_updated_event, { item = item })
+    script.raise_event(events.on_cloud_updated_event, {
+        item = item
+    })
 end
 
 ---@param item Cloud.StorageDetail
@@ -58,7 +69,9 @@ function cloud_storage:remove(item)
         else
             storage.cloud_items[get_key(item)] = nil
         end
-        script.raise_event(events.on_cloud_updated_event, { item = item })
+        script.raise_event(events.on_cloud_updated_event, {
+            item = item
+        })
     end
 end
 
@@ -149,11 +162,12 @@ end
 function cloud:get_items(quality)
     ---@type Cloud.StorageDetail[]
     local items = {}
-    for key, item in pairs(storage.cloud_items) do
+    local cloud_items = storage.cloud_items or {}
+    for key, item in pairs(cloud_items) do
         if get_key({
-                name = item.name,
-                quality = quality
-            }) == key then
+            name = item.name,
+            quality = quality
+        }) == key then
             table.insert(items, item)
         end
     end
