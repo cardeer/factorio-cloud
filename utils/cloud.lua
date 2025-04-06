@@ -149,7 +149,7 @@ end
 function cloud:get_items(quality)
     ---@type Cloud.StorageDetail[]
     local items = {}
-    for key, item in pairs(storage) do
+    for key, item in pairs(storage.cloud_items) do
         if get_key({
                 name = item.name,
                 quality = quality

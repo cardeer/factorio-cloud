@@ -4,7 +4,4 @@ function on_init()
 end
 
 function on_load()
-    if not storage.cloud_items then
-        storage.cloud_items = {}
-    end
 end
