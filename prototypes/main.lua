@@ -178,9 +178,9 @@ for i, unit in pairs(cloud_ingredients) do
             unit = unit,
             localised_description = "Cloud maximum is " .. increase_stack .. " stack per item"
         }
-        if not tech_added then
+        if i == 1 then
             tech.prerequisites = {
-                "logistic-system",
+                "construction-robotics",
                 "solar-energy",
                 "electric-energy-accumulators",
                 "effect-transmission"
@@ -188,11 +188,15 @@ for i, unit in pairs(cloud_ingredients) do
             tech.effects = {
                 {
                     type = "unlock-recipe",
-                    recipe = constants.items.cloud_storage_downloader.name
+                    recipe = constants.items.cloud_storage_uploader.name
                 },
+            }
+        elseif i == 2 then
+            tech.prerequisites = { "logistic-system", tech_added }
+            tech.effects = {
                 {
                     type = "unlock-recipe",
-                    recipe = constants.items.cloud_storage_uploader.name
+                    recipe = constants.items.cloud_storage_downloader.name
                 },
             }
         else
