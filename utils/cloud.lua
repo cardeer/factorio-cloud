@@ -1,5 +1,4 @@
 ---@type Cloud.Storage
-local storage = {}
 local cloud_storage = {}
 
 local function get_key(item)
@@ -29,7 +28,7 @@ function cloud_storage:is_full(item)
     local stack_size = (prototypes.item[item.name] and prototypes.item[item.name].stack_size or 1)
     local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * count_researched_technology()
 
-    if not storage[get_key(item)] or storage[get_key(item)].count < limit then
+    if not storage.cloud_items[get_key(item)] or storage.cloud_items[get_key(item)].count < limit then
         return false
     else
         return true
@@ -41,23 +40,23 @@ function cloud_storage:add(item)
     if cloud_storage:is_full(item) then
         return
     end
-    if storage[get_key(item)] == nil or storage[get_key(item)].quality ~= item.quality then
-        storage[get_key(item)] = item
+    if storage.cloud_items[get_key(item)] == nil or storage.cloud_items[get_key(item)].quality ~= item.quality then
+        storage.cloud_items[get_key(item)] = item
     else
-        storage[get_key(item)].count = storage[get_key(item)].count + item.count
+        storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
     end
     script.raise_event(events.on_cloud_updated_event, { item = item })
 end
 
 ---@param item Cloud.StorageDetail
 function cloud_storage:remove(item)
-    if storage[get_key(item)] ~= nil and storage[get_key(item)].quality == item.quality then
-        local total = storage[get_key(item)].count - item.count
+    if storage.cloud_items[get_key(item)] ~= nil and storage.cloud_items[get_key(item)].quality == item.quality then
+        local total = storage.cloud_items[get_key(item)].count - item.count
 
         if total > 0 then
-            storage[get_key(item)].count = total
+            storage.cloud_items[get_key(item)].count = total
         else
-            storage[get_key(item)] = nil
+            storage.cloud_items[get_key(item)] = nil
         end
         script.raise_event(events.on_cloud_updated_event, { item = item })
     end
@@ -66,10 +65,10 @@ end
 ---@param item Cloud.StorageDetail
 ---@return number
 function cloud_storage:get_count(item)
-    if not storage[get_key(item)] then
+    if not storage.cloud_items[get_key(item)] then
         return 0
     end
-    return storage[get_key(item)].count
+    return storage.cloud_items[get_key(item)].count
 end
 
 cloud = {}
