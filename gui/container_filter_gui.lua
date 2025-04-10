@@ -32,9 +32,9 @@ function gui.container_filter_gui.create(player, entity)
 
     frame_content.add({
         type = "choose-elem-button",
-        name = "cloud_dowmload_filter-" .. player.index .. "-" .. entity.unit_number,
+        name = "cloud_download_filter-" .. player.index .. "-" .. entity.unit_number,
         elem_type = "item",
-        item = storage_downloader.get(entity.unit_number).filter,
+        item = storage_downloader.get_storage_filtered(entity.unit_number).filter,
 
     })
 
@@ -56,7 +56,7 @@ function gui.container_filter_gui.create(player, entity)
         local button = footer_flow.add({
             type = 'button',
             name = 'storage-container-quality-button-' .. _quality .. "-" .. player.index,
-            toggled = storage_downloader.get(entity.unit_number).quality == _quality
+            toggled = storage_downloader.get_storage_filtered(entity.unit_number).quality == _quality
         })
 
         button.style = 'tool_button'
@@ -72,7 +72,7 @@ function gui.container_filter_gui.create(player, entity)
 
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
-            storage_downloader.get(entity.unit_number).quality = _quality
+            storage_downloader.get_storage_filtered(entity.unit_number).quality = _quality
             for k, v in pairs(buttons) do
                 v.toggled = k == _quality
             end
