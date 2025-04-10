@@ -28,7 +28,20 @@ function gui.cloud_storage_gui.render_content(player)
     content.style.vertical_spacing = 0
     content.style.horizontal_spacing = 0
 
-    for _, item in pairs(cloud:get_items(quality)) do
+    -- sorting
+    local items = cloud:get_items(quality)
+    table.sort(items, function(a, b)
+        local ga = prototypes.item[a.name].group.name
+        local gb = prototypes.item[b.name].group.name
+        if ga == gb then
+            return a.name < b.name
+        else
+            return ga > gb
+        end
+    end)
+
+    for _, item in pairs(items) do
+        item_pt = prototypes.item[item.name]
         item_count = item_count + 1
         local item_button = content.add({
             type = "sprite-button",
@@ -39,7 +52,14 @@ function gui.cloud_storage_gui.render_content(player)
                 type = 'cloud-item-button',
                 item = item
             },
-            style = 'inventory_slot'
+            style = 'inventory_slot',
+            tooltip = {
+                "",
+                "[item=" .. item.name .. "]   ", -- icon
+                "[font=default-bold][color=255,230,50]",
+                item_pt.localised_name,
+                "[/color][/font]",
+            }
         })
         if players:get(player.index).quality_filtered ~= "normal" then
             sprite = item_button.add({
@@ -51,7 +71,6 @@ function gui.cloud_storage_gui.render_content(player)
         end
         gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
             local inventory = player.get_main_inventory()
-
             if inventory ~= nil then
                 cloud:move_to_inventory(inventory, item)
             end
@@ -118,7 +137,6 @@ function gui.cloud_storage_gui.create(player)
     footer_flow.style.horizontally_stretchable = true
 
     local qualities = prototypes.quality
-
     local buttons = {}
 
     for key, quality in pairs(qualities) do
@@ -182,21 +200,18 @@ function gui.cloud_storage_gui.fetch_item_stack(item)
         if not display_content[player.index] or not display_content[player.index].valid then
             goto continue
         end
-        if cloud:item_count(item) == 0 or current_display_quality[player.index] ~= item.quality or not display_content[player.index].children then
-            gui.cloud_storage_gui.render_content(player)
+        if current_display_quality[player.index] ~= item.quality or not display_content[player.index].children then
+            -- gui.cloud_storage_gui.render_content(player)
             goto continue
         end
-        local is_update = false
         for _, el in pairs(display_content[player.index].children[1].children) do
             local button_name = 'cloud-storage-item-button-' .. player.index .. "-" .. item.name
             if el.name == button_name then
-                is_update = true
                 el.number = cloud:item_count(item)
+                goto continue
             end
         end
-        if not is_update then
-            gui.cloud_storage_gui.render_content(player)
-        end
+        gui.cloud_storage_gui.render_content(player)
 
         ::continue::
     end
