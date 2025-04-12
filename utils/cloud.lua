@@ -29,10 +29,13 @@ end
 ---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud_storage:is_full(item)
-    local stack_size = (prototypes.item[item.name] and prototypes.item[item.name].stack_size or 1)
-    local limit = stack_size * settings.startup["cloud_storage_stack_multiplier"].value * count_researched_technology()
+    if not storage.cloud_items[get_key(item)] then
+        return false
+    end
+    local limit = get_prototype_stack(item.name) * settings.startup["cloud_storage_stack_multiplier"].value *
+        count_researched_technology()
 
-    if not storage.cloud_items[get_key(item)] or storage.cloud_items[get_key(item)].count < limit then
+    if storage.cloud_items[get_key(item)].count < limit then
         return false
     else
         return true
@@ -41,10 +44,7 @@ end
 
 ---@param item Cloud.StorageDetail
 function cloud_storage:add(item)
-    if cloud_storage:is_full(item) then
-        return
-    end
-    if storage.cloud_items[get_key(item)] == nil or storage.cloud_items[get_key(item)].quality ~= item.quality then
+    if storage.cloud_items[get_key(item)] == nil then
         storage.cloud_items[get_key(item)] = item
     else
         storage.cloud_items[get_key(item)].count = storage.cloud_items[get_key(item)].count + item.count
@@ -58,12 +58,7 @@ end
 function cloud_storage:remove(item)
     if storage.cloud_items[get_key(item)] ~= nil and storage.cloud_items[get_key(item)].quality == item.quality then
         local total = storage.cloud_items[get_key(item)].count - item.count
-
-        if total > 0 then
-            storage.cloud_items[get_key(item)].count = total
-        else
-            storage.cloud_items[get_key(item)] = nil
-        end
+        storage.cloud_items[get_key(item)].count = total
         script.raise_event(events.on_cloud_updated_event, {
             item = item
         })
@@ -84,8 +79,12 @@ cloud = {}
 ---@param item Cloud.StorageDetail
 ---@return boolean
 function cloud:upload(item)
+    if cloud_storage:is_full(item) then
+        return false
+    end
+
     cloud_storage:add(item)
-    return false
+    return true
 end
 
 ---@param item Cloud.StorageDetail
@@ -120,6 +119,9 @@ function cloud:move_to_inventory(inventory, item)
     })
 
     local insert_stack = maximum_insert_to_inventory > item_stack and item_stack or maximum_insert_to_inventory
+    if insert_stack == 0 then
+        return
+    end
 
     ---@type Cloud.StorageDetail
     local item_inserted = {
@@ -135,8 +137,6 @@ function cloud:move_to_inventory(inventory, item)
     })
 
     cloud_storage:remove(item_inserted)
-
-    return item_inserted
 end
 
 ---@param item Cloud.StorageDetail | ItemStackDefinition

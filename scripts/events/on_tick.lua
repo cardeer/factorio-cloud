@@ -1,56 +1,43 @@
 local function do_upload()
-    for _, surface in pairs(game.surfaces) do
-        local surface_items = surface.find_entities_filtered({
-            name = constants.items.cloud_storage_uploader.name
-        })
+    for _, inventory in pairs(storage_uploader.get_all()) do
+        if not inventory then goto continue end
+        for _, item in pairs(inventory.get_contents()) do
+            if not cloud:is_full(item) then
+                cloud:upload({
+                    name = item.name,
+                    count = 1,
+                    quality = item.quality
+                })
 
-        for _, container in pairs(surface_items) do
-            local inventory = container.get_inventory(defines.inventory.chest)
-            if inventory ~= nil then
-                for _, item in pairs(inventory.get_contents()) do
-                    if not cloud:is_full(item) then
-                        cloud:upload({
-                            name = item.name,
-                            count = 1,
-                            quality = item.quality
-                        })
-
-                        inventory.remove({
-                            name = item.name,
-                            count = 1,
-                            quality = item.quality
-                        })
-                    end
-                end
+                inventory.remove({
+                    name = item.name,
+                    count = 1,
+                    quality = item.quality
+                })
             end
         end
+        :: continue ::
     end
 end
 
 local function do_download()
-    for _, surface in pairs(game.surfaces) do
-        local surface_items = surface.find_entities_filtered({
-            name = constants.items.cloud_storage_downloader.name
-        })
-        for _, container in pairs(surface_items) do
-            local inventory = container.get_inventory(defines.inventory.chest)
-            if inventory ~= nil then
-                if not storage_downloader.get(container.unit_number).filter or inventory:is_full() then
-                    goto continue
-                end
-                ---@type Cloud.StorageDetail
-                local item = {
-                    name = storage_downloader.get(container.unit_number).filter,
-                    quality = storage_downloader.get(container.unit_number).quality,
-                    count = 1
-                }
-                if cloud:can_download(item) and inventory.can_insert(item) then
-                    local downloaded = cloud:download(item)
-                    inventory.insert(downloaded)
-                end
-                ::continue::
-            end
+    for unit_number, inventory in pairs(storage_downloader.get_all()) do
+        if not inventory then goto continue end
+        local filter_by = storage_downloader.get_storage_filtered(unit_number)
+        if not filter_by.filter or inventory:is_full() then
+            goto continue
         end
+        ---@type Cloud.StorageDetail
+        local item = {
+            name = filter_by.filter,
+            quality = filter_by.quality,
+            count = 1
+        }
+        if cloud:can_download(item) and inventory.can_insert(item) then
+            local downloaded = cloud:download(item)
+            inventory.insert(downloaded)
+        end
+        ::continue::
     end
 end
 
