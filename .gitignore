@@ -1,2 +1,5 @@
 .vscode/settings.json
 __flib__
+*.zip
+
+.DS_Store
