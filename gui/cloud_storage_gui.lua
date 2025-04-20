@@ -53,13 +53,8 @@ function gui.cloud_storage_gui.render_content(player)
                 item = item
             },
             style = 'inventory_slot',
-            tooltip = {
-                "",
-                "[item=" .. item.name .. "]   ", -- icon
-                "[font=default-bold][color=255,230,50]",
-                item_pt.localised_name,
-                "[/color][/font]",
-            }
+            tooltip = {"", "[item=" .. item.name .. "]   ", -- icon
+            "[font=default-bold][color=255,230,50]", item_pt.localised_name, "[/color][/font]"}
         })
         if players:get(player.index).quality_filtered ~= "normal" then
             sprite = item_button.add({
@@ -67,7 +62,7 @@ function gui.cloud_storage_gui.render_content(player)
                 resize_to_sprite = false,
                 sprite = 'quality/' .. item.quality
             })
-            sprite.style.size = { 13, 13 }
+            sprite.style.size = {13, 13}
         end
         gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
             local inventory = player.get_main_inventory()
@@ -160,7 +155,7 @@ function gui.cloud_storage_gui.create(player)
             sprite = 'quality/' .. key
         })
 
-        sprite.style.size = { 16, 16 }
+        sprite.style.size = {16, 16}
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
             players:get(player.index).quality_filtered = key
@@ -178,6 +173,10 @@ end
 
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.destroy(player)
+    if player.gui.relative.children[constants.gui.cloud_storage.name .. '-' .. player.index] then
+        player.gui.relative.children[constants.gui.cloud_storage.name .. '-' .. player.index].destroy()
+    end
+
     if player.gui.relative.children[player.index] then
         player.gui.relative.children[player.index].destroy()
     end
