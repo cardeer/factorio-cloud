@@ -173,13 +173,14 @@ end
 
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.destroy(player)
-    if player.gui.relative.children[constants.gui.cloud_storage.name .. '-' .. player.index] then
-        player.gui.relative.children[constants.gui.cloud_storage.name .. '-' .. player.index].destroy()
+    local gui = utils.filter(player.gui.relative.children, function(obj)
+        return obj[2].name == constants.gui.cloud_storage.name .. '-' .. player.index
+    end)
+
+    for _, v in pairs(gui) do
+        v.destroy()
     end
 
-    if player.gui.relative.children[player.index] then
-        player.gui.relative.children[player.index].destroy()
-    end
     if relative[player.index] then
         relative[player.index].destroy()
     end
