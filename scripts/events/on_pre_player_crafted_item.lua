@@ -1,7 +1,12 @@
 ---@param event EventData.on_pre_player_crafted_item
 function events.on_pre_player_crafted_item(event)
-    local items = event.items.get_contents()
     local player = game.players[event.player_index]
+
+    if not settings.get_player_settings(player)["auto_download_ingredients"].value then
+        return
+    end
+
+    local items = event.items.get_contents()
     local inventory = player.get_main_inventory()
 
     if not inventory then
