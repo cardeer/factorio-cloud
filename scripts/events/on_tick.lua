@@ -1,4 +1,9 @@
+local is_uploading = false
+local is_downloading = false
+
 local function do_upload()
+    if is_uploading then return end
+    is_uploading = true
     for _, inventory in pairs(storage_uploader.get_all()) do
         if not inventory then goto continue end
         for _, item in pairs(inventory.get_contents()) do
@@ -18,9 +23,12 @@ local function do_upload()
         end
         :: continue ::
     end
+    is_uploading = false
 end
 
 local function do_download()
+    if is_downloading then return end
+    is_downloading = true
     for unit_number, inventory in pairs(storage_downloader.get_all()) do
         if not inventory then goto continue end
         local filter_by = storage_downloader.get_storage_filtered(unit_number)
@@ -39,6 +47,7 @@ local function do_download()
         end
         ::continue::
     end
+    is_downloading = false
 end
 
 ---@param event EventData.on_tick
