@@ -4,8 +4,11 @@ local relative = {}
 ---@type { [integer]: LuaGuiElement}
 local display_content = {}
 
----@type { [integer]: string}
+---@type { [integer]: string }
 local current_display_quality = {}
+
+---@type { [integer]: boolean }
+local player_gui_opened = {}
 
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.render_content(player)
@@ -53,8 +56,8 @@ function gui.cloud_storage_gui.render_content(player)
                 item = item
             },
             style = 'inventory_slot',
-            tooltip = {"", "[item=" .. item.name .. "]   ", -- icon
-            "[font=default-bold][color=255,230,50]", item_pt.localised_name, "[/color][/font]"}
+            tooltip = { "", "[item=" .. item.name .. "]   ", -- icon
+                "[font=default-bold][color=255,230,50]", item_pt.localised_name, "[/color][/font]" }
         })
         if players:get(player.index).quality_filtered ~= "normal" then
             sprite = item_button.add({
@@ -62,7 +65,7 @@ function gui.cloud_storage_gui.render_content(player)
                 resize_to_sprite = false,
                 sprite = 'quality/' .. item.quality
             })
-            sprite.style.size = {13, 13}
+            sprite.style.size = { 13, 13 }
         end
         gui.add_handler(player, defines.events.on_gui_click, item_button.name, function()
             local inventory = player.get_main_inventory()
@@ -86,6 +89,7 @@ end
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.create(player)
     gui.cloud_storage_gui.destroy(player)
+    player_gui_opened[player.index] = true
     if not cloud:is_available() then
         return
     end
@@ -155,7 +159,7 @@ function gui.cloud_storage_gui.create(player)
             sprite = 'quality/' .. key
         })
 
-        sprite.style.size = {16, 16}
+        sprite.style.size = { 16, 16 }
 
         gui.add_handler(player, defines.events.on_gui_click, button.name, function()
             players:get(player.index).quality_filtered = key
@@ -173,6 +177,7 @@ end
 
 ---@param player LuaPlayer
 function gui.cloud_storage_gui.destroy(player)
+    player_gui_opened[player.index] = false
     local gui = utils.filter(player.gui.relative.children, function(obj)
         return obj[2].name == constants.gui.cloud_storage.name .. '-' .. player.index
     end)
@@ -197,6 +202,9 @@ end
 ---@param item Cloud.StorageDetail
 function gui.cloud_storage_gui.fetch_item_stack(item)
     for _, player in pairs(game.players) do
+        if not player_gui_opened[player.index] then
+            goto continue
+        end
         if not display_content[player.index] or not display_content[player.index].valid then
             goto continue
         end
