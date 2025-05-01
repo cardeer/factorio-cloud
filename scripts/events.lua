@@ -1,7 +1,11 @@
 events = {}
 
 require('scripts.events.on_cloud_updated')
+require('scripts.events.on_uploader_process')
+require('scripts.events.on_downloader_process')
 script.on_event(events.on_cloud_updated_event, events.on_cloud_updated)
+script.on_event(events.on_uploader_process_event, events.on_uploader_process)
+script.on_event(events.on_downloader_process_event, events.on_downloader_process)
 
 require('scripts.events.gui_opened')
 require('scripts.events.gui_closed')

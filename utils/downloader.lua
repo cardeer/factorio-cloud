@@ -28,6 +28,40 @@ function storage_downloader.get_all()
     return storage.downloader_list
 end
 
+---@param limit number
+function storage_downloader.get_next(limit)
+    storage_downloader.get_all()
+
+    local target_list = {}
+    local count = 0
+    for id, inventory in pairs(storage.downloader_list) do
+        if not storage.downloader_state_target then
+            storage.downloader_state_target = id
+        end
+
+        if count > 0 and count <= limit then
+            table.insert(target_list, id, inventory)
+            count = count + 1
+        end
+
+        if storage.downloader_state_target == id then
+            table.insert(target_list, id, inventory)
+            count = 1
+        end
+
+        if count > limit then
+            storage.downloader_state_target = id
+            break
+        end
+    end
+
+    if count <= limit then
+        storage.downloader_state_target = nil
+    end
+
+    return target_list
+end
+
 ---@param id int
 ---@param inventory LuaInventory
 function storage_downloader.create(id, inventory)

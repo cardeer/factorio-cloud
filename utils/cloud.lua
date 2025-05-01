@@ -17,13 +17,17 @@ end
 
 ---@return int
 local function count_researched_technology()
+    local tech_researched_count = 0
     for i = 1, 100 do
         local tech = game.forces.player.technologies[constants.items.technology.prefix .. i]
-        if not tech or not tech.researched then
-            return (i - 1)
+        if tech and tech.researched then
+            tech_researched_count = i
+        else
+            break
         end
     end
-    return 0
+
+    return tech_researched_count
 end
 
 ---@param item Cloud.StorageDetail
